@@ -1,40 +1,190 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mom Messenger">
 <title>Mom Messenger</title>
 <style>
-body { font-family: sans-serif; padding: 20px; background: #f5f5f0; }
-h1 { color: #0f6e56; }
-textarea { width: 100%; height: 100px; font-size: 18px; padding: 10px; margin: 10px 0; }
-button { background: #0f6e56; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; width: 100%; cursor: pointer; }
-#status { margin-top: 15px; padding: 12px; border-radius: 8px; display: none; font-size: 16px; font-weight: bold; }
-.ok { background: #eaf3de; color: #3b6d11; }
-.err { background: #fcebeb; color: #a32d2d; }
+:root{--bg:#f7f5f0;--surface:#fff;--surface2:#f0ede6;--border:#e0dbd0;--text:#2c2a25;--muted:#7a7569;--teal:#0f6e56;--teal2:#1d9e75;--red:#a32d2d;--red-bg:#fcebeb;--green:#3b6d11;--green-bg:#eaf3de;--r:14px;--rs:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:2rem}
+header{background:var(--teal);color:#fff;padding:1.25rem 1.25rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+header h1{font-size:1.15rem;font-weight:600}
+header p{font-size:.78rem;opacity:.75;margin-top:2px}
+.gear{background:rgba(255,255,255,.15);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;flex-shrink:0}
+main{padding:1.25rem;max-width:540px;margin:0 auto}
+#status{border-radius:var(--rs);padding:.85rem 1rem;margin-bottom:1.25rem;font-size:.9rem;font-weight:500;display:none;align-items:center;gap:.6rem}
+#status.ok{display:flex;background:var(--green-bg);border:1px solid #a0cc70;color:var(--green)}
+#status.err{display:flex;background:var(--red-bg);border:1px solid #f0a0a0;color:var(--red)}
+#status.sending{display:flex;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.st{font-size:.78rem;opacity:.7;margin-left:auto}
+.lbl{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.25rem}
+.pb{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.75rem .85rem;text-align:left;cursor:pointer;font-size:.875rem;color:var(--text);line-height:1.3;min-height:52px;display:flex;align-items:center;gap:.5rem;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.pb:active{background:var(--teal);color:#fff;transform:scale(.97)}
+.pe{font-size:1.1rem;flex-shrink:0}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.9rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+textarea{width:100%;border:none;outline:none;font-family:inherit;font-size:1rem;color:var(--text);background:transparent;resize:none;line-height:1.5;min-height:90px}
+textarea::placeholder{color:var(--muted)}
+.foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:.7rem;margin-top:.6rem}
+.cc{font-size:.78rem;color:var(--muted)}
+.sb{background:var(--teal);color:#fff;border:none;border-radius:2rem;padding:.6rem 1.4rem;font-size:.95rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.5rem;min-width:100px;justify-content:center}
+.sb:disabled{background:var(--muted);cursor:not-allowed}
+.sp{width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.sb.loading .sp{display:block}
+.sb.loading .sl{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rs{margin-top:1.5rem}
+.ri{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.65rem .85rem;margin-bottom:.4rem;display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem}
+.rd{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.rd.ok{background:var(--teal2)}
+.rd.fail{background:var(--red)}
+.rm{flex:1;color:var(--text);line-height:1.35}
+.rt{font-size:.75rem;color:var(--muted);flex-shrink:0}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50;align-items:flex-end;justify-content:center}
+.ov.open{display:flex}
+.sh{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem 1.25rem 2rem;width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
+.sh h2{font-size:1.05rem;font-weight:600}
+.shh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.xb{background:var(--surface2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.pr{display:flex;gap:.5rem;margin-bottom:.5rem}
+.pr input{flex:0 0 42px;text-align:center;padding:.6rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);font-size:1rem}
+.pr textarea{flex:1;min-height:48px;padding:.6rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);font-size:.9rem;font-family:inherit;resize:none;color:var(--text);outline:none}
+.sv{width:100%;background:var(--teal);color:#fff;border:none;border-radius:var(--rs);padding:.85rem;font-size:1rem;font-weight:600;cursor:pointer;margin-top:1.25rem}
+canvas{display:none}
 </style>
 </head>
 <body>
-<h1>Mom Messenger</h1>
-<textarea id="msg" placeholder="Type a message for Mom..."></textarea>
-<button onclick="send()">Send to Echo Show</button>
-<div id="status"></div>
+<header>
+  <div><h1>Mom Messenger</h1><p>&#8594; Mary's Echo Show</p></div>
+  <button class="gear" onclick="openS()">&#9881;&#65039;</button>
+</header>
+<canvas id="cv" width="1280" height="720"></canvas>
+<main>
+  <div id="status"><span id="si"></span><span id="st"></span><span class="st" id="stime"></span></div>
+  <p class="lbl">Quick send</p>
+  <div class="grid" id="grid"></div>
+  <p class="lbl">Custom message</p>
+  <div class="box">
+    <textarea id="msg" placeholder="Type a message for Mom..." maxlength="300" rows="4" oninput="uc()"></textarea>
+    <div class="foot">
+      <span class="cc"><span id="cc">0</span> / 300</span>
+      <button class="sb" id="sendbtn" onclick="sendMsg()"><div class="sp"></div><span class="sl">Send &#8594;</span></button>
+    </div>
+  </div>
+  <div class="rs" id="rs" style="display:none">
+    <p class="lbl">Recent sends</p>
+    <div id="rl"></div>
+  </div>
+</main>
+<div class="ov" id="ov" onclick="ovClick(event)">
+  <div class="sh">
+    <div class="shh"><h2>Edit presets</h2><button class="xb" onclick="closeS()">&#10005;</button></div>
+    <div id="prows"></div>
+    <button class="sv" onclick="saveS()">Save</button>
+  </div>
+</div>
 <script>
-async function send() {
-  const text = document.getElementById('msg').value.trim();
-  if (!text) return;
-  const s = document.getElementById('status');
-  s.className = ''; s.style.display = 'block'; s.textContent = 'Sending...';
-  try {
-    const url = 'https://api-v2.voicemonkey.io/announcement?token=cec0aec7b8f039d62637eb233efe9e27_2955d0091ae49722b6b80f1f5482f3f6&device=echo-kitchen&text=' + encodeURIComponent(text) + '&no_bg=true';
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(r.status);
-    s.className = 'ok'; s.textContent = '✅ Delivered!';
-    document.getElementById('msg').value = '';
-  } catch(e) {
-    s.className = 'err'; s.textContent = '❌ Failed: ' + e.message;
-  }
+const TOKEN="cec0aec7b8f039d62637eb233efe9e27_2955d0091ae49722b6b80f1f5482f3f6";
+const DEVICE="echo-kitchen";
+const IMGBB="2cc5c26bee3cc7a278fa22ecb9d24cec";
+const DP=[
+  {e:"💊",t:"Time to take your medication."},
+  {e:"🍽️",t:"Lunch is ready!"},
+  {e:"🚗",t:"Betsy is on her way."},
+  {e:"📞",t:"Betsy will call you in a few minutes."},
+  {e:"🌙",t:"Time to get ready for bed. Betsy loves you."},
+  {e:"💛",t:"Just checking in. Betsy loves you, Mom."}
+];
+let presets=DP,log=[];
+function load(){
+  try{const p=localStorage.getItem('mp');if(p)presets=JSON.parse(p);const r=localStorage.getItem('mr');if(r)log=JSON.parse(r);}catch(e){}
+  rp();rl();
 }
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function now(){const d=new Date(),h=d.getHours()%12||12,m=String(d.getMinutes()).padStart(2,'0');return`${h}:${m} ${d.getHours()>=12?'PM':'AM'}`;}
+function ss(type,icon,text,time){const b=document.getElementById('status');b.className=type;document.getElementById('si').textContent=icon;document.getElementById('st').textContent=text;document.getElementById('stime').textContent=time||'';}
+function rp(){
+  const g=document.getElementById('grid');g.innerHTML='';
+  presets.forEach(p=>{if(!p.t)return;const b=document.createElement('button');b.className='pb';b.innerHTML=`<span class="pe">${p.e||'💬'}</span><span>${esc(p.t)}</span>`;b.onclick=()=>fire(p.t);g.appendChild(b);});
+}
+function uc(){document.getElementById('cc').textContent=document.getElementById('msg').value.length;}
+function mkImg(text){
+  const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),W=1280,H=720;
+  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#0f6e56';ctx.fillRect(0,0,W,130);
+  ctx.fillStyle='#ffffff';ctx.font='bold 58px Arial,sans-serif';ctx.fillText('Message from Betsy',50,88);
+  ctx.fillStyle='#1a1a1a';
+  const fs=text.length>80?72:text.length>40?88:108;
+  ctx.font=`bold ${fs}px Arial,sans-serif`;
+  const mw=W-100,lh=fs*1.25,words=text.split(' '),lines=[];let cur='';
+  for(const w of words){const t=cur?`${cur} ${w}`:w;if(ctx.measureText(t).width>mw&&cur){lines.push(cur);cur=w;}else cur=t;}
+  if(cur)lines.push(cur);
+  const tbh=lines.length*lh;let y=130+(H-130-tbh)/2+fs*.85;
+  for(const l of lines.slice(0,4)){ctx.fillText(l,50,y);y+=lh;}
+  const nd=new Date();
+  ctx.fillStyle='#999';ctx.font='34px Arial,sans-serif';
+  ctx.fillText(`${nd.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}  •  ${nd.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`,50,H-28);
+  return cv.toDataURL('image/jpeg',.9).split(',')[1];
+}
+async function upImg(b64){
+  const fd=new FormData();fd.append('key',IMGBB);fd.append('image',b64);fd.append('expiration','600');
+  const r=await fetch('https://api.imgbb.com/1/upload',{method:'POST',body:fd});
+  if(!r.ok)throw new Error('imgbb failed');
+  return(await r.json()).data.url;
+}
+async function sendMsg(){
+  const text=document.getElementById('msg').value.trim();if(!text)return;
+  const ok=await fire(text);if(ok){document.getElementById('msg').value='';uc();}
+}
+async function fire(text){
+  const btn=document.getElementById('sendbtn');btn.disabled=true;btn.classList.add('loading');
+  ss('sending','⏳','Preparing...');
+  let ok=false;
+  try{
+    let imgUrl=null;
+    try{ss('sending','⏳','Generating image...');const b64=mkImg(text);ss('sending','⏳','Uploading image...');imgUrl=await upImg(b64);}
+    catch(e){console.warn('img skip:',e.message);}
+    ss('sending','⏳','Sending to Echo Show...');
+    const u=new URL('https://api-v2.voicemonkey.io/announcement');
+    u.searchParams.set('token',TOKEN);u.searchParams.set('device',DEVICE);
+    u.searchParams.set('text',' ');u.searchParams.set('no_bg','true');
+    if(imgUrl)u.searchParams.set('background',imgUrl);
+    const r=await fetch(u.toString());if(!r.ok)throw new Error(`VM ${r.status}`);
+    const t=now();ss('ok','✅','Delivered to Echo Show',t);
+    log.unshift({text,time:t,ok:true});
+    try{localStorage.setItem('mr',JSON.stringify(log.slice(0,10)));}catch(e){}
+    rl();ok=true;
+    setTimeout(()=>{if(document.getElementById('status').classList.contains('ok'))document.getElementById('status').style.display='none';},6000);
+  }catch(e){
+    const t=now();ss('err','❌',`Failed: ${e.message}`,t);
+    log.unshift({text,time:t,ok:false});
+    try{localStorage.setItem('mr',JSON.stringify(log.slice(0,10)));}catch(e){}
+    rl();
+  }
+  btn.disabled=false;btn.classList.remove('loading');return ok;
+}
+function rl(){
+  if(!log.length)return;document.getElementById('rs').style.display='block';
+  document.getElementById('rl').innerHTML=log.slice(0,5).map(r=>`<div class="ri"><div class="rd ${r.ok?'ok':'fail'}"></div><span class="rm">${esc(r.text)}</span><span class="rt">${r.time}</span></div>`).join('');
+}
+function openS(){
+  const rows=document.getElementById('prows');rows.innerHTML='';
+  const ps=[...presets];while(ps.length<6)ps.push({e:'',t:''});
+  ps.slice(0,6).forEach((p,i)=>{const row=document.createElement('div');row.className='pr';row.innerHTML=`<input type="text" maxlength="2" placeholder="💬" value="${esc(p.e||'')}" id="pe${i}"><textarea placeholder="Message..." id="pt${i}">${esc(p.t||'')}</textarea>`;rows.appendChild(row);});
+  document.getElementById('ov').classList.add('open');
+}
+function closeS(){document.getElementById('ov').classList.remove('open');}
+function ovClick(e){if(e.target===document.getElementById('ov'))closeS();}
+function saveS(){
+  const ps=[];for(let i=0;i<6;i++){const e=document.getElementById(`pe${i}`)?.value||'',t=document.getElementById(`pt${i}`)?.value.trim()||'';if(t)ps.push({e,t});}
+  presets=ps.length?ps:DP;try{localStorage.setItem('mp',JSON.stringify(presets));}catch(e){}
+  rp();closeS();ss('ok','✅','Presets saved','');setTimeout(()=>{document.getElementById('status').style.display='none';},3000);
+}
+load();
 </script>
 </body>
 </html>
+
