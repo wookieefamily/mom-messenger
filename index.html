@@ -7,185 +7,448 @@
 <meta name="apple-mobile-web-app-title" content="Mom Messenger">
 <title>Mom Messenger</title>
 <style>
-:root{--bg:#f7f5f0;--surface:#fff;--surface2:#f0ede6;--border:#e0dbd0;--text:#2c2a25;--muted:#7a7569;--teal:#0f6e56;--teal2:#1d9e75;--red:#a32d2d;--red-bg:#fcebeb;--green:#3b6d11;--green-bg:#eaf3de;--r:14px;--rs:8px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:2rem}
-header{background:var(--teal);color:#fff;padding:1.25rem 1.25rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-header h1{font-size:1.15rem;font-weight:600}
-header p{font-size:.78rem;opacity:.75;margin-top:2px}
-.gear{background:rgba(255,255,255,.15);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;flex-shrink:0}
-main{padding:1.25rem;max-width:540px;margin:0 auto}
-#status{border-radius:var(--rs);padding:.85rem 1rem;margin-bottom:1.25rem;font-size:.9rem;font-weight:500;display:none;align-items:center;gap:.6rem}
-#status.ok{display:flex;background:var(--green-bg);border:1px solid #a0cc70;color:var(--green)}
-#status.err{display:flex;background:var(--red-bg);border:1px solid #f0a0a0;color:var(--red)}
-#status.sending{display:flex;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
-.st{font-size:.78rem;opacity:.7;margin-left:auto}
-.lbl{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.25rem}
-.pb{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.75rem .85rem;text-align:left;cursor:pointer;font-size:.875rem;color:var(--text);line-height:1.3;min-height:52px;display:flex;align-items:center;gap:.5rem;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.pb:active{background:var(--teal);color:#fff;transform:scale(.97)}
-.pe{font-size:1.1rem;flex-shrink:0}
-.box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.9rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-textarea{width:100%;border:none;outline:none;font-family:inherit;font-size:1rem;color:var(--text);background:transparent;resize:none;line-height:1.5;min-height:90px}
-textarea::placeholder{color:var(--muted)}
-.foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:.7rem;margin-top:.6rem}
-.cc{font-size:.78rem;color:var(--muted)}
-.sb{background:var(--teal);color:#fff;border:none;border-radius:2rem;padding:.6rem 1.4rem;font-size:.95rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.5rem;min-width:100px;justify-content:center}
-.sb:disabled{background:var(--muted);cursor:not-allowed}
-.sp{width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
-.sb.loading .sp{display:block}
-.sb.loading .sl{display:none}
-@keyframes spin{to{transform:rotate(360deg)}}
-.rs{margin-top:1.5rem}
-.ri{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.65rem .85rem;margin-bottom:.4rem;display:flex;align-items:flex-start;gap:.65rem;font-size:.875rem}
-.rd{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.rd.ok{background:var(--teal2)}
-.rd.fail{background:var(--red)}
-.rm{flex:1;color:var(--text);line-height:1.35}
-.rt{font-size:.75rem;color:var(--muted);flex-shrink:0}
-.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50;align-items:flex-end;justify-content:center}
-.ov.open{display:flex}
-.sh{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem 1.25rem 2rem;width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
-.sh h2{font-size:1.05rem;font-weight:600}
-.shh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
-.xb{background:var(--surface2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)}
-.pr{display:flex;gap:.5rem;margin-bottom:.5rem}
-.pr input{flex:0 0 42px;text-align:center;padding:.6rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);font-size:1rem}
-.pr textarea{flex:1;min-height:48px;padding:.6rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);font-size:.9rem;font-family:inherit;resize:none;color:var(--text);outline:none}
-.sv{width:100%;background:var(--teal);color:#fff;border:none;border-radius:var(--rs);padding:.85rem;font-size:1rem;font-weight:600;cursor:pointer;margin-top:1.25rem}
-canvas{display:none}
+  :root {
+    --bg: #f7f5f0; --surface: #ffffff; --surface2: #f0ede6;
+    --border: #e0dbd0; --text: #2c2a25; --text-muted: #7a7569;
+    --teal: #0f6e56; --teal-light: #e1f5ee; --teal-mid: #1d9e75;
+    --amber: #ba7517; --amber-light: #faeeda;
+    --red: #a32d2d; --red-light: #fcebeb;
+    --green: #3b6d11; --green-light: #eaf3de;
+    --radius: 14px; --radius-sm: 8px; --shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 2rem; }
+  header { background: var(--teal); color: white; padding: 1.25rem 1.25rem 1rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  header h1 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+  header p { font-size: 0.78rem; opacity: 0.75; margin-top: 2px; }
+  .gear-btn { background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; flex-shrink: 0; }
+  .gear-btn:active { background: rgba(255,255,255,0.25); }
+  main { padding: 1.25rem; max-width: 540px; margin: 0 auto; }
+  #status-banner { border-radius: var(--radius-sm); padding: 0.85rem 1rem; margin-bottom: 1.25rem; font-size: 0.9rem; font-weight: 500; display: none; align-items: center; gap: 0.6rem; }
+  #status-banner.success { display: flex; background: var(--green-light); border: 1px solid #a0cc70; color: var(--green); }
+  #status-banner.error   { display: flex; background: var(--red-light);   border: 1px solid #f0a0a0; color: var(--red); }
+  #status-banner.sending { display: flex; background: var(--surface2);    border: 1px solid var(--border); color: var(--text-muted); }
+  .status-time { font-size: 0.78rem; opacity: 0.7; flex-shrink: 0; margin-left: auto; }
+  .section-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.6rem; }
+  .presets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem; }
+  .preset-btn { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 0.85rem; text-align: left; cursor: pointer; font-size: 0.875rem; color: var(--text); line-height: 1.3; transition: background 0.12s, transform 0.1s; min-height: 52px; display: flex; align-items: center; gap: 0.5rem; box-shadow: var(--shadow); }
+  .preset-btn:active { background: var(--teal-light); border-color: var(--teal-mid); transform: scale(0.97); }
+  .preset-emoji { font-size: 1.1rem; flex-shrink: 0; }
+  .message-area { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+  textarea { width: 100%; border: none; outline: none; font-family: inherit; font-size: 1rem; color: var(--text); background: transparent; resize: none; line-height: 1.5; min-height: 90px; }
+  textarea::placeholder { color: var(--text-muted); }
+  .message-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.7rem; margin-top: 0.6rem; }
+  .char-count { font-size: 0.78rem; color: var(--text-muted); }
+  .send-btn { background: var(--teal); color: white; border: none; border-radius: 2rem; padding: 0.6rem 1.4rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.15s, transform 0.1s; min-width: 100px; justify-content: center; }
+  .send-btn:active { background: var(--teal-mid); transform: scale(0.97); }
+  .send-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.35); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .send-btn.loading .spinner { display: block; }
+  .send-btn.loading .send-label { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .recent-section { margin-top: 1.5rem; }
+  .recent-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.65rem 0.85rem; margin-bottom: 0.4rem; display: flex; align-items: flex-start; gap: 0.65rem; font-size: 0.875rem; }
+  .recent-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .recent-dot.ok { background: var(--teal-mid); }
+  .recent-dot.fail { background: var(--red); }
+  .recent-msg { flex: 1; color: var(--text); line-height: 1.35; }
+  .recent-time { font-size: 0.75rem; color: var(--text-muted); flex-shrink: 0; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 50; align-items: flex-end; justify-content: center; }
+  .overlay.open { display: flex; }
+  .sheet { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; }
+  .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+  .sheet-header h2 { font-size: 1.05rem; font-weight: 600; }
+  .close-btn { background: var(--surface2); border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field input, .field textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.65rem 0.85rem; font-size: 0.95rem; font-family: inherit; color: var(--text); outline: none; }
+  .field input:focus, .field textarea:focus { border-color: var(--teal-mid); }
+  .field textarea { resize: vertical; min-height: 56px; }
+  .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; }
+  .preset-editor { margin-top: 1.25rem; }
+  .preset-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .preset-row input { flex: 0 0 42px; text-align: center; padding: 0.6rem; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 1rem; }
+  .preset-row textarea { flex: 1; min-height: 48px; padding: 0.6rem; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; font-family: inherit; resize: none; color: var(--text); outline: none; }
+  .save-btn { width: 100%; background: var(--teal); color: white; border: none; border-radius: var(--radius-sm); padding: 0.85rem; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1.25rem; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+  canvas { display: none; }
 </style>
 </head>
 <body>
+
 <header>
-  <div><h1>Mom Messenger</h1><p>&#8594; Mary's Echo Show</p></div>
-  <button class="gear" onclick="openS()">&#9881;&#65039;</button>
+  <div>
+    <h1>Mom Messenger</h1>
+    <p>&#8594; Mom's Echo Show</p>
+  </div>
+  <button class="gear-btn" onclick="openSettings()">&#9881;&#65039;</button>
 </header>
-<canvas id="cv" width="1280" height="720"></canvas>
+
+<canvas id="msg-canvas" width="1280" height="720"></canvas>
+
 <main>
-  <div id="status"><span id="si"></span><span id="st"></span><span class="st" id="stime"></span></div>
-  <p class="lbl">Quick send</p>
-  <div class="grid" id="grid"></div>
-  <p class="lbl">Custom message</p>
-  <div class="box">
-    <textarea id="msg" placeholder="Type a message for Mom..." maxlength="300" rows="4" oninput="uc()"></textarea>
-    <div class="foot">
-      <span class="cc"><span id="cc">0</span> / 300</span>
-      <button class="sb" id="sendbtn" onclick="sendMsg()"><div class="sp"></div><span class="sl">Send &#8594;</span></button>
+  <div id="status-banner">
+    <span id="status-icon"></span>
+    <span id="status-text"></span>
+    <span class="status-time" id="status-time"></span>
+  </div>
+
+  <p class="section-label">Quick send</p>
+  <div class="presets-grid" id="presets-grid"></div>
+
+  <p class="section-label">Custom message</p>
+  <div class="message-area">
+    <textarea id="message-input" placeholder="Type a message for Mom..." maxlength="300" rows="4" oninput="updateCount()"></textarea>
+    <div class="message-footer">
+      <span class="char-count"><span id="char-count">0</span> / 300</span>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">
+        <div class="spinner"></div>
+        <span class="send-label">Send &#8594;</span>
+      </button>
     </div>
   </div>
-  <div class="rs" id="rs" style="display:none">
-    <p class="lbl">Recent sends</p>
-    <div id="rl"></div>
+
+  <div class="recent-section" id="recent-section" style="display:none">
+    <p class="section-label">Recent sends</p>
+    <div id="recent-list"></div>
   </div>
 </main>
-<div class="ov" id="ov" onclick="ovClick(event)">
-  <div class="sh">
-    <div class="shh"><h2>Edit presets</h2><button class="xb" onclick="closeS()">&#10005;</button></div>
-    <div id="prows"></div>
-    <button class="sv" onclick="saveS()">Save</button>
+
+<div class="overlay" id="settings-overlay" onclick="overlayClick(event)">
+  <div class="sheet">
+    <div class="sheet-header">
+      <h2>Settings</h2>
+      <button class="close-btn" onclick="closeSettings()">&#10005;</button>
+    </div>
+    <div class="preset-editor">
+      <p class="section-label">Quick send presets</p>
+      <div id="preset-editor-rows"></div>
+    </div>
+    <button class="save-btn" onclick="saveSettings()">Save</button>
   </div>
 </div>
+
 <script>
-const TOKEN="cec0aec7b8f039d62637eb233efe9e27_2955d0091ae49722b6b80f1f5482f3f6";
-const DEVICE="echo-kitchen";
-const IMGBB="2cc5c26bee3cc7a278fa22ecb9d24cec";
-const DP=[
-  {e:"📅",t:"Hi Mom! Your Day: Caregiver 10am-2pm and 4:30pm-8:30pm",v:"https://shotstack-api-v1-output.s3-ap-southeast-2.amazonaws.com/qqmrit81gk/ef9020f4-54ee-4a2e-b71f-890f6d62ee80.mp4"},
-  {e:"💊",t:"Time to take your medication."},
-  {e:"🍽️",t:"Lunch is ready!"},
-  {e:"🚗",t:"Betsy is on her way."},
-  {e:"📞",t:"Betsy will call you in a few minutes."},
-  {e:"🌙",t:"Time to get ready for bed. Betsy loves you."},
-  {e:"💛",t:"Just checking in. Betsy loves you, Mom."}
+// ── Hardcoded credentials ─────────────────────────────────────────────────────
+const VM_TOKEN      = "cec0aec7b8f039d62637eb233efe9e27_2955d0091ae49722b6b80f1f5482f3f6";
+const VM_DEVICE     = "echo-kitchen";
+const IMGBB_KEY     = "2cc5c26bee3cc7a278fa22ecb9d24cec";
+const SHOTSTACK_KEY = "UODcfyRc52kgVe3sBWs60qVbD414Giod6VEwAyWD";
+
+// ── Presets ───────────────────────────────────────────────────────────────────
+const DEFAULT_PRESETS = [
+  { emoji: "💊", text: "Time to take your medication." },
+  { emoji: "🍽️", text: "Lunch is ready!" },
+  { emoji: "🚗", text: "Betsy is on her way." },
+  { emoji: "📞", text: "Betsy will call you in a few minutes." },
+  { emoji: "🌙", text: "Time to get ready for bed. Betsy loves you." },
+  { emoji: "💛", text: "Just checking in. Betsy loves you, Mom." }
 ];
-let presets=DP,log=[];
-function load(){
-  try{const p=localStorage.getItem('mp');if(p)presets=JSON.parse(p);const r=localStorage.getItem('mr');if(r)log=JSON.parse(r);}catch(e){}
-  rp();rl();
+
+let presets = DEFAULT_PRESETS;
+let recentLog = [];
+
+function load() {
+  try {
+    const p = localStorage.getItem('mom_presets');
+    if (p) presets = JSON.parse(p);
+    const r = localStorage.getItem('mom_recent');
+    if (r) recentLog = JSON.parse(r);
+  } catch(e) {}
+  renderPresets();
+  renderRecent();
 }
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function now(){const d=new Date(),h=d.getHours()%12||12,m=String(d.getMinutes()).padStart(2,'0');return`${h}:${m} ${d.getHours()>=12?'PM':'AM'}`;}
-function ss(type,icon,text,time){const b=document.getElementById('status');b.className=type;document.getElementById('si').textContent=icon;document.getElementById('st').textContent=text;document.getElementById('stime').textContent=time||'';}
-function rp(){
-  const g=document.getElementById('grid');g.innerHTML='';
-  presets.forEach(p=>{if(!p.t)return;const b=document.createElement('button');b.className='pb';b.innerHTML=`<span class="pe">${p.e||'💬'}</span><span>${esc(p.t)}</span>`;b.onclick=()=>fire(p.t);g.appendChild(b);});
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-function uc(){document.getElementById('cc').textContent=document.getElementById('msg').value.length;}
-function mkImg(text){
-  const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),W=1280,H=720;
-  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#0f6e56';ctx.fillRect(0,0,W,130);
-  ctx.fillStyle='#ffffff';ctx.font='bold 58px Arial,sans-serif';ctx.fillText('Message from Betsy',50,88);
-  ctx.fillStyle='#1a1a1a';
-  const fs=text.length>80?72:text.length>40?88:108;
-  ctx.font=`bold ${fs}px Arial,sans-serif`;
-  const mw=W-100,lh=fs*1.25,words=text.split(' '),lines=[];let cur='';
-  for(const w of words){const t=cur?`${cur} ${w}`:w;if(ctx.measureText(t).width>mw&&cur){lines.push(cur);cur=w;}else cur=t;}
-  if(cur)lines.push(cur);
-  const tbh=lines.length*lh;let y=130+(H-130-tbh)/2+fs*.85;
-  for(const l of lines.slice(0,4)){ctx.fillText(l,50,y);y+=lh;}
-  const nd=new Date();
-  ctx.fillStyle='#999';ctx.font='34px Arial,sans-serif';
-  ctx.fillText(`${nd.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}  •  ${nd.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`,50,H-28);
-  return cv.toDataURL('image/jpeg',.9).split(',')[1];
+
+function nowTime() {
+  const d = new Date();
+  const h = d.getHours() % 12 || 12;
+  const m = String(d.getMinutes()).padStart(2,'0');
+  return `${h}:${m} ${d.getHours() >= 12 ? 'PM' : 'AM'}`;
 }
-async function upImg(b64){
-  const fd=new FormData();fd.append('key',IMGBB);fd.append('image',b64);fd.append('expiration','600');
-  const r=await fetch('https://api.imgbb.com/1/upload',{method:'POST',body:fd});
-  if(!r.ok)throw new Error('imgbb failed');
-  return(await r.json()).data.url;
+
+function setStatus(type, icon, text, time) {
+  const b = document.getElementById('status-banner');
+  b.className = type;
+  document.getElementById('status-icon').textContent = icon;
+  document.getElementById('status-text').textContent = text;
+  document.getElementById('status-time').textContent = time || '';
 }
-async function sendMsg(){
-  const text=document.getElementById('msg').value.trim();if(!text)return;
-  const ok=await fire(text);if(ok){document.getElementById('msg').value='';uc();}
+
+function renderPresets() {
+  const grid = document.getElementById('presets-grid');
+  grid.innerHTML = '';
+  presets.forEach(p => {
+    if (!p.text) return;
+    const btn = document.createElement('button');
+    btn.className = 'preset-btn';
+    btn.innerHTML = `<span class="preset-emoji">${p.emoji||'💬'}</span><span>${esc(p.text)}</span>`;
+    btn.onclick = () => fireMessage(p.text, p.video || null);
+    grid.appendChild(btn);
+  });
 }
-async function fire(text){
-  const btn=document.getElementById('sendbtn');btn.disabled=true;btn.classList.add('loading');
-  ss('sending','⏳','Preparing...');
-  let ok=false;
-  try{
-    let imgUrl=null;
-    try{ss('sending','⏳','Generating image...');const b64=mkImg(text);ss('sending','⏳','Uploading image...');imgUrl=await upImg(b64);}
-    catch(e){console.warn('img skip:',e.message);}
-    ss('sending','⏳','Sending to Echo Show...');
-    const u=new URL('https://api-v2.voicemonkey.io/announcement');
-    u.searchParams.set('token',TOKEN);u.searchParams.set('device',DEVICE);
-    u.searchParams.set('text',' ');u.searchParams.set('no_bg','true');
-    if(imgUrl)u.searchParams.set('background',imgUrl);
-    const r=await fetch(u.toString());if(!r.ok)throw new Error(`VM ${r.status}`);
-    const t=now();ss('ok','✅','Delivered to Echo Show',t);
-    log.unshift({text,time:t,ok:true});
-    try{localStorage.setItem('mr',JSON.stringify(log.slice(0,10)));}catch(e){}
-    rl();ok=true;
-    setTimeout(()=>{if(document.getElementById('status').classList.contains('ok'))document.getElementById('status').style.display='none';},6000);
-  }catch(e){
-    const t=now();ss('err','❌',`Failed: ${e.message}`,t);
-    log.unshift({text,time:t,ok:false});
-    try{localStorage.setItem('mr',JSON.stringify(log.slice(0,10)));}catch(e){}
-    rl();
+
+function updateCount() {
+  document.getElementById('char-count').textContent =
+    document.getElementById('message-input').value.length;
+}
+
+// ── Image generation ──────────────────────────────────────────────────────────
+function makeImage(text) {
+  const canvas = document.getElementById('msg-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1280, H = 720;
+
+  // Background - pure white
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Teal header bar - taller
+  ctx.fillStyle = '#0f6e56';
+  ctx.fillRect(0, 0, W, 130);
+
+  // Header text
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 58px Arial, sans-serif';
+  ctx.fillText('Message from Betsy', 50, 88);
+
+  // Word-wrap the message text - bigger font
+  ctx.fillStyle = '#1a1a1a';
+  const fontSize = text.length > 80 ? 72 : text.length > 40 ? 88 : 108;
+  ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+
+  const maxWidth = W - 100;
+  const lineHeight = fontSize * 1.25;
+  const words = text.split(' ');
+  const lines = [];
+  let current = '';
+
+  for (const word of words) {
+    const test = current ? `${current} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
   }
-  btn.disabled=false;btn.classList.remove('loading');return ok;
+  if (current) lines.push(current);
+
+  // Center vertically in the remaining space
+  const textBlockHeight = lines.length * lineHeight;
+  let y = 110 + (H - 110 - textBlockHeight) / 2 + fontSize * 0.85;
+
+  for (const line of lines.slice(0, 4)) {
+    ctx.fillText(line, 50, y);
+    y += lineHeight;
+  }
+
+  // Date/time footer
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  ctx.fillStyle = '#888';
+  ctx.font = '36px Arial, sans-serif';
+  ctx.fillText(`${dateStr}  •  ${timeStr}`, 50, H - 30);
+
+  return canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
 }
-function rl(){
-  if(!log.length)return;document.getElementById('rs').style.display='block';
-  document.getElementById('rl').innerHTML=log.slice(0,5).map(r=>`<div class="ri"><div class="rd ${r.ok?'ok':'fail'}"></div><span class="rm">${esc(r.text)}</span><span class="rt">${r.time}</span></div>`).join('');
+
+async function uploadImage(b64) {
+  const body = new FormData();
+  body.append('key', IMGBB_KEY);
+  body.append('image', b64);
+  body.append('expiration', '600'); // 10 min, enough for Echo Show to fetch it
+  const resp = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body });
+  if (!resp.ok) throw new Error('imgbb upload failed');
+  const data = await resp.json();
+  return data.data.url;
 }
-function openS(){
-  const rows=document.getElementById('prows');rows.innerHTML='';
-  const ps=[...presets];while(ps.length<6)ps.push({e:'',t:''});
-  ps.slice(0,6).forEach((p,i)=>{const row=document.createElement('div');row.className='pr';row.innerHTML=`<input type="text" maxlength="2" placeholder="💬" value="${esc(p.e||'')}" id="pe${i}"><textarea placeholder="Message..." id="pt${i}">${esc(p.t||'')}</textarea>`;rows.appendChild(row);});
-  document.getElementById('ov').classList.add('open');
+
+// ── Send ──────────────────────────────────────────────────────────────────────
+async function generateVideo(text) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  const fontSize = text.length > 80 ? 52 : text.length > 50 ? 64 : text.length > 30 ? 76 : 90;
+
+  const payload = {
+    timeline: {
+      tracks: [
+        {
+          clips: [{
+            asset: {
+              type: "html",
+              html: `<html><body style="margin:0;background:#000000;display:flex;flex-direction:column;height:720px;width:1280px;font-family:Arial,sans-serif"><div style="padding:24px 60px;border-bottom:2px solid #333"><span style="color:#aaaaaa;font-size:34px">${dateStr} &nbsp;&bull;&nbsp; ${timeStr}</span></div><div style="flex:1;display:flex;align-items:center;padding:50px 60px"><p style="font-size:${fontSize}px;font-weight:bold;color:#ffffff;line-height:1.35;margin:0">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
+/g,'<br>')}</p></div><div style="padding:20px 60px;border-top:2px solid #333"><span style="color:#666666;font-size:30px">from Betsy &hearts;</span></div></body></html>`,
+              width: 1280,
+              height: 720
+            },
+            start: 0,
+            length: 30
+          }]
+        }
+      ]
+    },
+    output: {
+      format: "mp4",
+      resolution: "hd"
+    }
+  };
+
+  // Submit render
+  const submitResp = await fetch('https://api.shotstack.io/stage/render', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': SHOTSTACK_KEY
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!submitResp.ok) throw new Error('Shotstack submit failed: ' + submitResp.status);
+  const submitData = await submitResp.json();
+  const renderId = submitData.response.id;
+
+  // Poll for completion (max 60 seconds)
+  for (let i = 0; i < 24; i++) {
+    await new Promise(r => setTimeout(r, 2500));
+    setStatus('sending', '⏳', `Rendering video... (${Math.round((i+1)*2.5)}s)`, '');
+    const pollResp = await fetch(`https://api.shotstack.io/stage/render/${renderId}`, {
+      headers: { 'x-api-key': SHOTSTACK_KEY }
+    });
+    if (!pollResp.ok) continue;
+    const pollData = await pollResp.json();
+    const status = pollData.response.status;
+    if (status === 'done') return pollData.response.url;
+    if (status === 'failed') throw new Error('Shotstack render failed');
+  }
+  throw new Error('Shotstack timed out');
 }
-function closeS(){document.getElementById('ov').classList.remove('open');}
-function ovClick(e){if(e.target===document.getElementById('ov'))closeS();}
-function saveS(){
-  const ps=[];for(let i=0;i<6;i++){const e=document.getElementById(`pe${i}`)?.value||'',t=document.getElementById(`pt${i}`)?.value.trim()||'';if(t)ps.push({e,t});}
-  presets=ps.length?ps:DP;try{localStorage.setItem('mp',JSON.stringify(presets));}catch(e){}
-  rp();closeS();ss('ok','✅','Presets saved','');setTimeout(()=>{document.getElementById('status').style.display='none';},3000);
+
+async function sendMessage() {
+  const text = document.getElementById('message-input').value.trim();
+  if (!text) return;
+  const ok = await fireMessage(text);
+  if (ok) { document.getElementById('message-input').value = ''; updateCount(); }
 }
+
+async function fireMessage(text, preRenderedVideoUrl = null) {
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  setStatus('sending', '⏳', 'Preparing message...', '');
+
+  let ok = false;
+  try {
+    // 1. Try image generation — silently skip if browser blocks canvas on local files
+    // 1. Generate video via Shotstack
+    let videoUrl = preRenderedVideoUrl || null;
+    if (!videoUrl) {
+      try {
+        setStatus('sending', '⏳', 'Generating video...', '');
+        videoUrl = await generateVideo(text);
+      } catch(e) {
+        console.warn('Video failed, audio only:', e.message);
+      }
+    }
+
+    // 2. Send to Voice Monkey
+    setStatus('sending', '⏳', 'Sending to Echo Show...', '');
+    let apiUrl;
+    if (videoUrl) {
+      // Build URL manually to avoid double-encoding the video URL
+      apiUrl = `https://api-v2.voicemonkey.io/announcement?token=${VM_TOKEN}&device=${VM_DEVICE}&video=${encodeURIComponent(videoUrl)}`;
+    } else {
+      apiUrl = `https://api-v2.voicemonkey.io/announcement?token=${VM_TOKEN}&device=${VM_DEVICE}&text=${encodeURIComponent(text)}&no_bg=true`;
+    }
+
+    const resp = await fetch(apiUrl);
+    if (!resp.ok) throw new Error(`Voice Monkey error: ${resp.status}`);
+
+    const t = nowTime();
+    setStatus('success', '✅', 'Delivered to Echo Show', t);
+    recentLog.unshift({ text, time: t, ok: true });
+    try { localStorage.setItem('mom_recent', JSON.stringify(recentLog.slice(0,10))); } catch(e) {}
+    renderRecent();
+    ok = true;
+
+    setTimeout(() => {
+      if (document.getElementById('status-banner').classList.contains('success'))
+        document.getElementById('status-banner').style.display = 'none';
+    }, 6000);
+
+  } catch(e) {
+    const t = nowTime();
+    setStatus('error', '❌', `Failed: ${e.message}`, t);
+    recentLog.unshift({ text, time: t, ok: false });
+    try { localStorage.setItem('mom_recent', JSON.stringify(recentLog.slice(0,10))); } catch(e) {}
+    renderRecent();
+    console.error(e);
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  return ok;
+}
+
+function renderRecent() {
+  if (!recentLog.length) return;
+  document.getElementById('recent-section').style.display = 'block';
+  document.getElementById('recent-list').innerHTML = recentLog.slice(0,5).map(r => `
+    <div class="recent-item">
+      <div class="recent-dot ${r.ok ? 'ok' : 'fail'}"></div>
+      <span class="recent-msg">${esc(r.text)}</span>
+      <span class="recent-time">${r.time}</span>
+    </div>
+  `).join('');
+}
+
+// ── Settings (presets only) ───────────────────────────────────────────────────
+function openSettings() {
+  const rows = document.getElementById('preset-editor-rows');
+  rows.innerHTML = '';
+  const ps = [...presets];
+  while (ps.length < 6) ps.push({ emoji: '', text: '' });
+  ps.slice(0,6).forEach((p,i) => {
+    const row = document.createElement('div');
+    row.className = 'preset-row';
+    row.innerHTML = `
+      <input type="text" maxlength="2" placeholder="💬" value="${esc(p.emoji||'')}" id="pe-emoji-${i}">
+      <textarea placeholder="Message..." id="pe-text-${i}">${esc(p.text||'')}</textarea>
+    `;
+    rows.appendChild(row);
+  });
+  document.getElementById('settings-overlay').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settings-overlay').classList.remove('open');
+}
+
+function overlayClick(e) {
+  if (e.target === document.getElementById('settings-overlay')) closeSettings();
+}
+
+function saveSettings() {
+  const ps = [];
+  for (let i = 0; i < 6; i++) {
+    const emoji = document.getElementById(`pe-emoji-${i}`)?.value || '';
+    const text  = document.getElementById(`pe-text-${i}`)?.value.trim() || '';
+    if (text) ps.push({ emoji, text });
+  }
+  presets = ps.length ? ps : DEFAULT_PRESETS;
+  try { localStorage.setItem('mom_presets', JSON.stringify(presets)); } catch(e) {}
+  renderPresets();
+  closeSettings();
+  setStatus('success', '✅', 'Presets saved', '');
+  setTimeout(() => { document.getElementById('status-banner').style.display = 'none'; }, 3000);
+}
+
 load();
 </script>
 </body>
 </html>
-
