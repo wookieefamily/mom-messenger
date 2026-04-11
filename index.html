@@ -149,7 +149,7 @@ async function generateVideo(text) {
   // Count lines to pick font size
   const lines = text.split(String.fromCharCode(10));
   const lineCount = lines.length;
-  const fs = lineCount > 4 ? 46 : lineCount > 3 ? 54 : lineCount > 2 ? 62 : text.length > 60 ? 60 : text.length > 40 ? 72 : 86;
+  const fs = lineCount > 4 ? 58 : lineCount > 3 ? 68 : lineCount > 2 ? 76 : text.length > 60 ? 72 : text.length > 40 ? 84 : 100;
 
   // Safe HTML - convert special chars and newlines to <br>
   const safeLines = lines.map(function(l) {
@@ -163,7 +163,7 @@ async function generateVideo(text) {
     + '</body></html>';
 
   const payload = {
-    timeline: { tracks: [{ clips: [{ asset: { type: 'html', html: html, width: 1280, height: 720 }, start: 0, length: 30 }] }] },
+    timeline: { tracks: [{ clips: [{ asset: { type: 'html', html: html, width: 1280, height: 720 }, start: 0, length: 300 }] }] },
     output: { format: 'mp4', resolution: 'hd' }
   };
 
