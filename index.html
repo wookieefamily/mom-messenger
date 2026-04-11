@@ -136,12 +136,76 @@ async function sendMsg() {
   if(ok){ document.getElementById('msg').value=''; uc(); }
 }
 
+async function generateVideo(text) {
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dateStr = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+  const h = now.getHours() % 12 || 12;
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const timeStr = h + ':' + m + ' ' + (now.getHours() >= 12 ? 'PM' : 'AM');
+  const fs = text.length > 80 ? 52 : text.length > 50 ? 64 : text.length > 30 ? 76 : 90;
+  const safeText = text.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('"').join('&quot;').split("'").join('&#39;').split('
+').join('<br>');
+
+  const bodyStyle = 'margin:0;background:#000000;display:flex;flex-direction:column;height:720px;width:1280px;font-family:Arial,sans-serif';
+  const topStyle = 'padding:24px 60px;border-bottom:2px solid #333333';
+  const topSpanStyle = 'color:#aaaaaa;font-size:34px';
+  const midStyle = 'flex:1;display:flex;align-items:center;padding:50px 60px';
+  const pStyle = 'font-size:' + fs + 'px;font-weight:bold;color:#ffffff;line-height:1.35;margin:0';
+  const botStyle = 'padding:20px 60px;border-top:2px solid #333333';
+  const botSpanStyle = 'color:#666666;font-size:30px';
+
+  const html = '<html><body style="' + bodyStyle + '">'
+    + '<div style="' + topStyle + '"><span style="' + topSpanStyle + '">' + dateStr + ' &bull; ' + timeStr + '</span></div>'
+    + '<div style="' + midStyle + '"><p style="' + pStyle + '">' + safeText + '</p></div>'
+    + '<div style="' + botStyle + '"><span style="' + botSpanStyle + '">from Betsy &#9829;</span></div>'
+    + '</body></html>';
+
+  const payload = {
+    timeline: { tracks: [{ clips: [{ asset: { type: 'html', html: html, width: 1280, height: 720 }, start: 0, length: 30 }] }] },
+    output: { format: 'mp4', resolution: 'hd' }
+  };
+
+  const submitResp = await fetch('https://api.shotstack.io/stage/render', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': 'sOnJVbg2EzPtAw4b3pcLCdhGNbk5Y0Y1v74vcTcP' },
+    body: JSON.stringify(payload)
+  });
+  if (!submitResp.ok) throw new Error('Shotstack submit failed: ' + submitResp.status);
+  const submitData = await submitResp.json();
+  const renderId = submitData.response.id;
+
+  for (let i = 0; i < 24; i++) {
+    await new Promise(r => setTimeout(r, 2500));
+    const pollResp = await fetch('https://api.shotstack.io/stage/render/' + renderId, {
+      headers: { 'x-api-key': 'sOnJVbg2EzPtAw4b3pcLCdhGNbk5Y0Y1v74vcTcP' }
+    });
+    if (!pollResp.ok) continue;
+    const pollData = await pollResp.json();
+    if (pollData.response.status === 'done') return pollData.response.url;
+    if (pollData.response.status === 'failed') throw new Error('Shotstack render failed');
+  }
+  throw new Error('Shotstack timed out');
+}
+
 async function fire(text, videoUrl) {
   const btn = document.getElementById('sendbtn');
   btn.disabled=true; btn.classList.add('loading');
   ss('sending','⏳','Sending to Echo Show...','');
   let ok = false;
   try {
+    // If preset has a pre-rendered video, use it directly
+    // Otherwise generate one via Shotstack
+    if (!videoUrl) {
+      ss('sending','⏳','Generating video...','');
+      try {
+        videoUrl = await generateVideo(text);
+      } catch(e) {
+        console.warn('Video generation failed, falling back to audio:', e.message);
+      }
+    }
+
     let apiUrl;
     if(videoUrl) {
       apiUrl = 'https://api-v2.voicemonkey.io/announcement?token='+VM_TOKEN+'&device='+VM_DEVICE+'&video='+encodeURIComponent(videoUrl);
